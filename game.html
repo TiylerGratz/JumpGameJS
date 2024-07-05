@@ -192,7 +192,7 @@
                 }
 
                 createStep(){
-                    let newStep = new gamePiece(getRandomIntLocation(700), -getRandomInt(50), 100, 40, "#FF00FF");
+                    let newStep = new gamePiece(getRandomIntLocation(700), -getRandomInt(50), 100, 20, "#FF00FF");
                     newStep.addHitBox();
                     this.addTerrain(newStep);
                     
@@ -211,7 +211,7 @@
                 step.y = 300;
                 step2.y = 200;
                 sky = new gamePiece(0, 0, gameWidth, gameHeight, "#87CEEB");
-                player.y = 400;
+                player.y = 390;
                 currentGround = ground;
                 
 
@@ -225,7 +225,6 @@
             function move(num){
                     player.clear();
                     player.x = player.x + num;
-                
             }
 
             function jump(){
@@ -244,10 +243,10 @@
             }
 
             function jumpFull(){
-                if(player.y > groundLevel - 280 && jumping && !game.isColliding()){
+                if(player.y > groundLevel - jumpHeight && jumping && !game.isColliding()){
                     player.clear();
-                    player.y = player.y - 7;
-                } else if (game.isColliding() || player.y == groundLevel - 280){
+                    player.y = player.y - jumpSpeed;
+                } else if (game.isColliding() || player.y == groundLevel - jumpHeight){
                     jumping = false;
                 } else if(game.checkLanding()){
                         groundLevel = currentGround.y;
@@ -292,8 +291,11 @@
         
         //numbers 
         var gameWidth = 800;
-        let gameHeight = 700
+        let gameHeight = 600
         let groundLevel = 440;
+        let moveSpeed = 2;
+        let jumpSpeed = 5;
+        let jumpHeight = 280;
 
         //controls
         let contrList = new Array();
@@ -326,11 +328,11 @@
             
                 65 : {
                     pressed : false,
-                    func: () => move(-2)
+                    func: () => move(-moveSpeed)
                 }, 
                 68 : {
                     pressed : false,
-                    func: () => move(2)
+                    func: () => move(moveSpeed)
                 }, 
                 87 : {
                     pressed : false,
@@ -354,11 +356,12 @@
                     }
                     game.shiftDown(1);
                     gravity(2);
-                    if(game.terrain[game.terrain.length - 1].y > 150){
+                    if(game.terrain[game.terrain.length - 2].y > 200){
                         game.createStep();
+                        /*
                         if(getRandomInt(10) < 3){
                             game.createStep();
-                        }
+                        }*/
                     }
                 } 
 

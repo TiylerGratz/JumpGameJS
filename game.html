@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html> 
+    <body>
+        
+        <button id = "start" type = "button" onclick = "startGame()">start</button>
+        
+
+        
+        
+
+    
+        
+        
+        
+        
+        
+        <script>
+      
+            class gamePiece{
+                constructor(x, y, width, height, color){
+                    this.x = x;
+                    this.y = y;
+                    this.width = width;
+                    this.height = height;
+                    this.color = color;
+                    this.hitBox = new hitBox(0, 0, 0, 0);
+                    this.ctx = game.context;
+                    
+                }
+
+                update(){
+                    this.ctx = game.context;
+                    this.ctx.fillStyle = this.color;
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+
+                clear(){
+                    this.ctx = game.context;
+                    this.ctx.clearRect(this.x, this.y, this.width, this.height);
+                    this.hitBox = new hitBox(0, 0, 0, 0);
+                }
+
+                addHitBox(){
+                    this.hitBox = new hitBox(new corner(this.x, this.y), 
+                    new corner(this.x + this.width, this.y),
+                    new corner(this.x, this.y + this.height), 
+                    new corner(this.x + this.width, this.y + this.height))
+                }
+
+                inLandingZone(){
+                    return player.y + player.height - 1< this.y && ((player.x > this.x && player.x + player.width < this.x + this.width) || (player.x > this.x && player.x + player.width < this.x + this.width + player.width * 1.1) || (player.x + player.width * 1.1 > this.x && player.x + player.width < this.x + this.width));
+                }
+
+            }
+
+            class hitBox{
+                constructor(cornerOne, cornerTwo, cornerThree, cornerFour){
+                    this.one = cornerOne;
+                    this.two = cornerTwo;
+                    this.three = cornerThree;
+                    this.four = cornerFour;
+                }
+
+                //returns true if the other hitBox is colliding this one
+                collision(other){
+                    if(this.one.isHigher(other.one) && other.one.isHigher(this.three)){
+                        if(this.one.isLeftward(other.one) && other.one.isLeftward(this.two)){
+                            return true;
+                        } else if(this.one.isLeftward(other.two) && other.two.isLeftward(this.two)){
+                            return true;
+                        }
+                    } else if(this.one.isHigher(other.three) && other.three.isHigher(this.three)){
+                        if(this.one.isLeftward(other.three) && other.three.isLeftward(this.two)){
+                            return true;
+                        } else if(this.one.isLeftward(other.four) && other.four.isLeftward(this.two)){
+                            return true;
+                        }
+                    } 
+                    return false;
+                }
+
+                leftCollision(other){
+
+                }
+
+                rightCollision(other){
+
+                }
+
+            }
+            
+            class corner{
+                constructor(x, y){
+                    this.x = x;
+                    this.y = y;
+                }
+
+                isEqual(other){
+                    return this.x == other.x && this.y == other.y;
+                }
+
+                isHigher(other){
+                    return this.y < other.y;
+                }
+
+                isLeftward(other){
+                    return this.x < other.x;
+                }
+
+            }
+
+            class gameArea{
+                constructor(width, height){
+                    this.width = width;
+                    this.height = height;
+                    this.canvas = document.createElement("canvas");
+                    this.terrain = new Array();
+                }
+
+                start(){
+                    this.canvas.width = this.width;
+                    this.canvas.height = this.height;
+                    this.context = this.canvas.getContext("2d");
+                    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                    this.interval = setInterval(updateGameArea, 1);
+
+                    this.newCtx = this.canvas.getContext("2d");
+                    this.newCtx.font = "48px serif";
+                    this.newCtx.fillStyle = "white";
+                    this.newCtx.fillText(score, 350, 50);
+                    score = 0;
+                    
+                   
+
+                    //terrain.forEach(addBoxes);
+                    
+                }
+
+                updateScore(){
+                    this.newCtx.fillStyle = "white";
+                    this.newCtx.fillText(score, 350, 50);
+                }
+
+                addTerrain(piece){
+                    this.terrain.push(piece);
+                }
+                
+                updateTerrain(){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        this.terrain[i].update();
+                    }
+                }
+
+                clearTerrain(){
+                    for(let i = this.terrain.length - 1; i > 2; i--){
+                        this.terrain[i].clear();
+                        this.terrain.pop();
+                    }
+                }
+
+                addTerrainBoxes(){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        this.terrain[i].addHitBox();
+                    }
+                }
+
+                isColliding(){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        if(this.terrain[i].hitBox.collision(player.hitBox)){
+                            
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                checkLanding(){
+                    for(let i = this.terrain.length - 1; i > -1; i--){
+                        if(this.terrain[i].inLandingZone()){
+                            currentGround = this.terrain[i];
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                shiftDown(num){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        this.terrain[i].y = this.terrain[i].y + num;
+                    }
+                    score = score + num;
+                }
+
+                createStep(){
+                    let newStep = new gamePiece(getRandomIntLocation(700), -getRandomInt(50), 100, 40, "#FF00FF");
+                    newStep.addHitBox();
+                    this.addTerrain(newStep);
+                    
+                }
+            }
+
+
+            function startGame(){
+                game.start();
+                player.update();
+                ground.update();
+                game.updateTerrain();
+                game.addTerrainBoxes();
+                document.getElementById("start").innerHTML = "";
+                ground.y = 440;
+                step.y = 300;
+                step2.y = 200;
+                sky = new gamePiece(0, 0, gameWidth, gameHeight, "#87CEEB");
+                player.y = 400;
+                currentGround = ground;
+                
+
+            }
+
+            function gameOver(){
+                game.clearTerrain();
+                startGame();
+            }
+
+            function move(num){
+                    player.clear();
+                    player.x = player.x + num;
+                
+            }
+
+            function jump(){
+                if(player.y + player.height == groundLevel){
+                    jumping = true;
+                }
+            }
+
+            function isGrounded(){
+                for(let i = 0; i < game.terrain.length; i++){
+                    if(player.y + player.height == groundLevel && game.isColliding()){
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
+            function jumpFull(){
+                if(player.y > groundLevel - 280 && jumping && !game.isColliding()){
+                    player.clear();
+                    player.y = player.y - 7;
+                } else if (game.isColliding() || player.y == groundLevel - 280){
+                    jumping = false;
+                } else if(game.checkLanding()){
+                        groundLevel = currentGround.y;
+                } 
+
+            }
+
+            function gravity(speed){
+                if(player.y + player.height < groundLevel){
+                    player.clear();
+                    player.y = player.y + speed; 
+                    if(player.y + player.height > groundLevel){
+                        player.y = groundLevel - player.height;
+                    }
+                }
+                
+            }
+
+            function make_base(x, y){
+                base_image = new Image();
+                base_image.src = 'https://www.petplan.co.uk/images/breeds/persian.png';
+                base_image.onload = function(){
+                    player.ctx.drawImage(base_image, x, y + 8 , player.width, player.height);
+                }
+            }
+
+            function getRandomIntLocation(max) {
+                let offset = 250;
+                let num = Math.floor(Math.random() * max);
+                if(num < game.terrain[game.terrain.length - 1].x - offset){ 
+                    num = game.terrain[game.terrain.length - 1].x - offset;
+                } else if(num > game.terrain[game.terrain.length - 1].x + offset){ 
+                    num = game.terrain[game.terrain.length - 1].x + offset;
+                }
+                return num;
+            }
+
+            function getRandomInt(max){
+                return Math.floor(Math.random() * max);
+            }
+
+        
+        //numbers 
+        var gameWidth = 800;
+        let gameHeight = 700
+        let groundLevel = 440;
+
+        //controls
+        let contrList = new Array();
+        let jumping = false;
+
+        //game pieces
+        let score = 0;
+        let game = new gameArea(gameWidth, gameHeight);
+        let player = new gamePiece(3, 400, 40, 40, "purple");
+        let sky = new gamePiece(0, 0, gameWidth, gameHeight, "#87CEEB");
+        let ground = new gamePiece(0, 440, gameWidth, 30, "green");
+        let currentGround = ground;
+        let step = new gamePiece(200, 300, 100, 20, "blue");
+        let step2 = new gamePiece(400, 200, 100, 20, "red");
+        
+        
+        //add terrain 
+        game.addTerrain(ground);
+        game.addTerrain(step);
+        game.addTerrain(step2);
+        
+
+        
+
+       
+
+        
+
+        let controller = { 
+            
+                65 : {
+                    pressed : false,
+                    func: () => move(-2)
+                }, 
+                68 : {
+                    pressed : false,
+                    func: () => move(2)
+                }, 
+                87 : {
+                    pressed : false,
+                    func: () => jump()
+                },
+            }
+
+            function updateGameArea(){
+
+
+                Object.keys(controller).forEach(key=> {
+                controller[key].pressed && controller[key].func()
+                })
+
+                jumpFull();
+                gravity(1);
+                
+                if(player.y < 300){
+                    if(player.y < 0){
+                        game.shiftDown(2);
+                    }
+                    game.shiftDown(1);
+                    gravity(2);
+                    if(game.terrain[game.terrain.length - 1].y > 150){
+                        game.createStep();
+                        if(getRandomInt(10) < 3){
+                            game.createStep();
+                        }
+                    }
+                } 
+
+                
+
+                sky.update();
+                player.update();
+                game.updateTerrain();
+                game.addTerrainBoxes();
+
+                player.addHitBox();
+
+                game.updateScore();
+
+                //make_base(player.x, player.y);
+
+                if(player.y > gameHeight){
+                    gameOver();
+                }
+
+                
+            }
+
+            document.addEventListener("keydown", (e) => {
+                if(controller[e.keyCode]){
+                    controller[e.keyCode].pressed = true
+                }
+            })
+            document.addEventListener("keyup", (e) => {
+                if(controller[e.keyCode]){
+                    controller[e.keyCode].pressed = false
+                }
+            })
+
+        </script>
+    </body>
+
+</html>

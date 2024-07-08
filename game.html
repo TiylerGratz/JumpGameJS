@@ -4,7 +4,6 @@
         
         <button id = "start" type = "button" onclick = "startGame()">start</button>
         
-
         
         
 
@@ -25,8 +24,19 @@
                     this.color = color;
                     this.hitBox = new hitBox(0, 0, 0, 0);
                     this.ctx = game.context;
+                    this.image = new Image();
                     
                 }
+
+                
+                makeImage(picture){
+                    this.image.src = picture;
+                    this.image.onload = () => {
+                        this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                    };
+                }
+
+
 
                 update(){
                     this.ctx = game.context;
@@ -246,6 +256,7 @@
 
             function gameOver(){
                 game.clearTerrain();
+                game.interval = clearInterval();
                 startGame();
             }
 
@@ -296,13 +307,7 @@
                 
             }
 
-            function make_base(x, y){
-                base_image = new Image();
-                base_image.src = 'kosmo.png';
-                base_image.onload = function(){
-                    player.ctx.drawImage(base_image, x, y + 8 , player.width, player.height);
-                }
-            }
+            
 
             function getRandomIntLocation(max) {
                 let offset = 250;
@@ -325,7 +330,7 @@
         let gameHeight = 600
         let groundLevel = 440;
         let moveSpeed = 2;
-        let jumpSpeed = 5;
+        let jumpSpeed = 8;
         let jumpHeight = 280;
 
         //controls
@@ -335,20 +340,21 @@
         //game pieces
         let score = 0;
         let game = new gameArea(gameWidth, gameHeight);
-        let player = new gamePiece(3, 400, 40, 40, "purple");
+        let player = new gamePiece(3, 300, 50, 50, "purple");
+        player.makeImage('kosmo.png');
         let sky = new gamePiece(0, 0, gameWidth, gameHeight, "#87CEEB");
         let ground = new gamePiece(0, 440, gameWidth, 30, "green");
         let currentGround = ground;
         let step = new gamePiece(200, 300, 100, 20, "blue");
         let step2 = new gamePiece(400, 200, 100, 20, "red");
-        let step3 = new gamePiece(400, 420, 100, 20, "red");
+        //let step3 = new gamePiece(400, 420, 100, 20, "red");
         
         
         //add terrain 
         game.addTerrain(ground);
         game.addTerrain(step);
         game.addTerrain(step2);
-        game.addTerrain(step3);
+        //game.addTerrain(step3);
 
         game.addTerrainBoxes();
         
@@ -391,19 +397,20 @@
                     }
                     game.shiftDown(1);
                     gravity(2);
-                    if(game.terrain[game.terrain.length - 2].y > 200){
+                    if(game.terrain[game.terrain.length - 2].y > 150){
                         game.createStep();
-                        /*
-                        if(getRandomInt(10) < 3){
-                            game.createStep();
-                        }*/
                     }
                 } 
 
-                
+                if(player.x + player.width < 0){
+                    player.x = gameWidth;
+                } else if (player.x > gameWidth){
+                    player.x = 0 - player.width;
+                }
+
+                player.makeImage('New Piskel.png');
 
                 sky.update();
-                player.update();
                 game.updateTerrain();
                 game.addTerrainBoxes();
 
@@ -411,7 +418,7 @@
 
                 game.updateScore();
 
-                make_base(player.x, player.y);
+                player.makeImage('New Piskel.png');
 
                 if(player.y > gameHeight){
                     gameOver();

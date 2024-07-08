@@ -80,11 +80,22 @@
                 }
 
                 leftCollision(other){
-
+                    console.log(this.collision(other));
+                    if(this.collision(other)){
+                        if(other.one.isLeftward(this.one) && this.two.isLeftward(other.two)){
+                            return true;
+                        }
+                    }
+                    return false;
                 }
 
                 rightCollision(other){
-
+                    if(this.collision(other)){
+                        if(other.two.isLeftward(this.two) && this.one.isLeftward(other.one)){
+                            return true;
+                        }
+                    }
+                    return false;
                 }
 
             }
@@ -167,7 +178,24 @@
                 isColliding(){
                     for(let i = 0; i < this.terrain.length; i++){
                         if(this.terrain[i].hitBox.collision(player.hitBox)){
-                            
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                leftColliding(){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        if(this.terrain[i].hitBox.leftCollision(player.hitBox)){
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                rightColliding(){
+                    for(let i = 0; i < this.terrain.length; i++){
+                        if(this.terrain[i].hitBox.rightCollision(player.hitBox)){
                             return true;
                         }
                     }
@@ -223,8 +251,14 @@
             }
 
             function move(num){
+                
+
+
+                if(!((game.leftColliding() && num < 0) || (game.rightColliding() && num > 0))){
                     player.clear();
                     player.x = player.x + num;
+                } 
+                    
             }
 
             function jump(){
@@ -310,12 +344,14 @@
         let currentGround = ground;
         let step = new gamePiece(200, 300, 100, 20, "blue");
         let step2 = new gamePiece(400, 200, 100, 20, "red");
+        let step3 = new gamePiece(400, 420, 100, 20, "red");
         
         
         //add terrain 
         game.addTerrain(ground);
         game.addTerrain(step);
         game.addTerrain(step2);
+        game.addTerrain(step3);
         
 
         

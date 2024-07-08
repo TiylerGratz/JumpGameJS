@@ -80,7 +80,6 @@
                 }
 
                 leftCollision(other){
-                    console.log(this.collision(other));
                     if(this.collision(other)){
                         if(other.one.isLeftward(this.one) && this.two.isLeftward(other.two)){
                             return true;
@@ -251,9 +250,7 @@
             }
 
             function move(num){
-                
-
-
+                //console.log(step3.hitBox.collision(player));
                 if(!((game.leftColliding() && num < 0) || (game.rightColliding() && num > 0))){
                     player.clear();
                     player.x = player.x + num;
@@ -301,7 +298,7 @@
 
             function make_base(x, y){
                 base_image = new Image();
-                base_image.src = 'https://www.petplan.co.uk/images/breeds/persian.png';
+                base_image.src = 'kosmo.png';
                 base_image.onload = function(){
                     player.ctx.drawImage(base_image, x, y + 8 , player.width, player.height);
                 }
@@ -352,6 +349,8 @@
         game.addTerrain(step);
         game.addTerrain(step2);
         game.addTerrain(step3);
+
+        game.addTerrainBoxes();
         
 
         
@@ -412,7 +411,7 @@
 
                 game.updateScore();
 
-                //make_base(player.x, player.y);
+                make_base(player.x, player.y);
 
                 if(player.y > gameHeight){
                     gameOver();

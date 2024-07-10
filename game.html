@@ -291,7 +291,7 @@
                 } else if (game.isColliding() || player.y == groundLevel - jumpHeight){
                     jumping = false;
                 } else if(game.checkLanding()){
-                        groundLevel = currentGround.y;
+                    groundLevel = currentGround.y;
                 } 
 
             }
@@ -317,7 +317,7 @@
                          }, 100);
                           
                 } else if (game.isColliding() || player.y == groundLevel - jumpHeight){
-                    gravity(10);
+                    gravity(2);
                 } else if(game.checkLanding()){
                         groundLevel = currentGround.y;
                 } 
@@ -393,7 +393,7 @@
                 }, 
                 87 : {
                     pressed : false,
-                    func: () => jumpTest()
+                    func: () => jump()
                 },
             }
 
@@ -404,7 +404,7 @@
                 controller[key].pressed && controller[key].func()
                 })
 
-                //jumpFull();
+                jumpFull();
                 gravity(3);
                 
                 if(player.y < 300){

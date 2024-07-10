@@ -26,10 +26,12 @@
                     this.ctx = game.context;
                     this.image = new Image();
                     
+                    
                 }
 
                 
                 makeImage(picture){
+                    this.ctx = game.context;
                     this.image.src = picture;
                     this.image.onload = () => {
                         this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
@@ -45,7 +47,7 @@
                 }
 
                 clear(){
-                    this.ctx = game.context;
+                    //this.ctx = game.context;
                     this.ctx.clearRect(this.x, this.y, this.width, this.height);
                     this.hitBox = new hitBox(0, 0, 0, 0);
                 }
@@ -151,8 +153,6 @@
                     score = 0;
                     
                    
-
-                    //terrain.forEach(addBoxes);
                     
                 }
 
@@ -261,18 +261,11 @@
             }
 
             function move(num){
-                //console.log(step3.hitBox.collision(player));
                 if(!((game.leftColliding() && num < 0) || (game.rightColliding() && num > 0))){
-                    player.clear();
+                    //player.clear();
                     player.x = player.x + num;
                 } 
                     
-            }
-
-            function jump(){
-                if(player.y + player.height == groundLevel){
-                    jumping = true;
-                }
             }
 
             function isGrounded(){
@@ -284,9 +277,15 @@
                 }
             }
 
+            function jump(){
+                if(player.y + player.height == groundLevel){
+                    jumping = true;
+                }
+            }
+
             function jumpFull(){
                 if(player.y > groundLevel - jumpHeight && jumping && !game.isColliding()){
-                    player.clear();
+                    //player.clear();
                     player.y = player.y - jumpSpeed;
                 } else if (game.isColliding() || player.y == groundLevel - jumpHeight){
                     jumping = false;
@@ -298,7 +297,7 @@
 
             function gravity(speed){
                 if(player.y + player.height < groundLevel){
-                    player.clear();
+                    //player.clear();
                     player.y = player.y + speed; 
                     if(player.y + player.height > groundLevel){
                         player.y = groundLevel - player.height;

@@ -307,22 +307,6 @@
                 
             }
 
-            function jumpTest(){
-                if(player.y > groundLevel - jumpHeight && !game.isColliding()){
-                    console.log("Landing Checked")
-                    console.log(groundLevel);
-                    console.log(player.y);
-                        setTimeout(() => {  
-                            player.y = player.y - 10;
-                         }, 100);
-                          
-                } else if (game.isColliding() || player.y == groundLevel - jumpHeight){
-                    gravity(2);
-                } else if(game.checkLanding()){
-                        groundLevel = currentGround.y;
-                } 
-            }
-
 
 
             function getRandomIntLocation(max) {

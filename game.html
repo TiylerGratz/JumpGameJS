@@ -24,19 +24,10 @@
                     this.color = color;
                     this.hitBox = new hitBox(0, 0, 0, 0);
                     this.ctx = game.context;
-                    this.image = new Image();
                     
                     
                 }
 
-                
-                makeImage(picture){
-                    this.ctx = game.context;
-                    this.image.src = picture;
-                    this.image.onload = () => {
-                        this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-                    };
-                }
 
 
 
@@ -340,7 +331,6 @@
         let score = 0;
         let game = new gameArea(gameWidth, gameHeight);
         let player = new gamePiece(3, 300, 50, 50, "purple");
-        player.makeImage('New Piskel.png');
         let sky = new gamePiece(0, 0, gameWidth, gameHeight, "#87CEEB");
         let ground = new gamePiece(0, 440, gameWidth, 30, "green");
         let currentGround = ground;
@@ -407,17 +397,15 @@
                     player.x = 0 - player.width;
                 }
 
-                player.makeImage('New Piskel.png');
 
                 sky.update();
                 game.updateTerrain();
                 game.addTerrainBoxes();
 
                 player.addHitBox();
+                player.update();
 
                 game.updateScore();
-
-                player.makeImage('New Piskel.png');
 
                 if(player.y > gameHeight){
                     gameOver();
